@@ -1,0 +1,5 @@
+{
+  "name": "Remix: Kasugano Sora v1.6",
+  "description": "Kiến trúc sư cốt truyện AI. Phiên bản 1.6 tích hợp NTK Architecture: Bộ nhớ đa tầng, RAG Vector Search và Hệ thống quy tắc Fog-of-War.",
+  "requestFramePermissions": []
+}

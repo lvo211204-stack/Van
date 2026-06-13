@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Auth helpers
+    function isSignedIn() { return request.auth != null; }
+    function isVerified() { return request.auth.token.email_verified == true; }
+    function isOwner(userId) { return request.auth.uid == userId; }
+    
+    // Data validation helpers
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // User validation
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'createdAt', 'updatedAt'])
+        && data.email is string && data.email.size() <= 200
+        && data.createdAt is number
+        && data.updatedAt is number;
+    }
+    
+    match /users/{userId} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) 
+                    && isValidUser(incoming())
+                    && incoming().createdAt == request.time.toMillis()
+                    && incoming().updatedAt == request.time.toMillis();
+      allow update: if isSignedIn() && isOwner(userId)
+                    && isValidUser(incoming())
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time.toMillis()
+                    && incoming().diff(existing()).affectedKeys().hasOnly(['updatedAt', 'email']);
+      allow delete: if isSignedIn() && isOwner(userId);
+      
+      match /stories/{storyId} {
+        function isValidStory(data) {
+          return data.keys().hasAll(['id', 'userId', 'title', 'createdAt', 'updatedAt'])
+                 && data.id == storyId
+                 && data.userId == userId
+                 && data.title is string && data.title.size() <= 200
+                 && data.createdAt is number
+                 && data.updatedAt is number;
+        }
+
+        allow read, list: if isSignedIn() && isOwner(userId) && isValidId(storyId) && isValidId(userId);
+        
+        allow create: if isSignedIn() && isOwner(userId) && isValidId(storyId) && isValidId(userId)
+                      && isValidStory(incoming())
+                      && incoming().createdAt == request.time.toMillis()
+                      && incoming().updatedAt == request.time.toMillis();
+                      
+        allow update: if isSignedIn() && isOwner(userId) && isValidId(storyId) && isValidId(userId)
+                      && isValidStory(incoming())
+                      && incoming().createdAt == existing().createdAt
+                      && incoming().updatedAt == request.time.toMillis();
+                      
+        allow delete: if isSignedIn() && isOwner(userId) && isValidId(storyId) && isValidId(userId);
+      }
+    }
+  }
+}

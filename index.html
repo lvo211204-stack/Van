@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="vi" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Kasugano Sora v1.6 - Story Architect</title>
+    
+    <!-- Preload fonts: Outfit (Modern Sans) & Merriweather (Story) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Gen Z Dark Theme Base (Deep Zinc)
+              slate: {
+                850: '#18181b', // zinc-900
+                900: '#09090b', // zinc-950
+                950: '#000000', // true black
+              },
+              // Vibrant Accents (Indigo - Violet - Pink)
+              primary: {
+                50: '#eef2ff',
+                100: '#e0e7ff',
+                200: '#c7d2fe',
+                300: '#a5b4fc',
+                400: '#818cf8',
+                500: '#6366f1', // Indigo
+                600: '#4f46e5',
+                700: '#4338ca',
+                800: '#3730a3',
+                900: '#312e81',
+              },
+              accent: {
+                pink: '#f472b6',
+                cyan: '#22d3ee',
+              }
+            },
+            fontFamily: {
+              serif: ['Merriweather', 'serif'],
+              sans: ['Outfit', 'sans-serif'], // Changed to Outfit for modern look
+            },
+            animation: {
+              'bounce-slight': 'bounce-slight 2s infinite',
+              'fadeIn': 'fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'slideUp': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'pulse-glow': 'pulse-glow 2s infinite',
+              'float': 'float 3s ease-in-out infinite',
+            },
+            keyframes: {
+              'bounce-slight': {
+                '0%, 100%': { transform: 'translate(-50%, 0)' },
+                '50%': { transform: 'translate(-50%, -10%)' },
+              },
+              'fadeIn': {
+                '0%': { opacity: '0', transform: 'scale(0.95)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              'slideUp': {
+                '0%': { transform: 'translateY(100%)' },
+                '100%': { transform: 'translateY(0)' },
+              },
+              'pulse-glow': {
+                '0%, 100%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.5)' },
+                '50%': { boxShadow: '0 0 25px rgba(99, 102, 241, 0.8)' },
+              },
+              'float': {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-5px)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #18181b;
+        --primary-color: #6366f1;
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --glass-bg: rgba(255, 255, 255, 0.8);
+      }
+
+      .dark {
+        --bg-color: #09090b;
+        --text-color: #e4e4e7;
+        --primary-color: #818cf8;
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-bg: rgba(24, 24, 27, 0.6);
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+        font-family: 'Outfit', sans-serif;
+        height: 100dvh;
+        width: 100vw;
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      
+      #root {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Hide Scrollbar for clean mobile look but keep functionality */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Custom thinner scrollbar for content */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+      }
+
+      /* Safe Area for iPhones */
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      
+      .glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+      }
+
+      /* Loading Animation */
+      .app-loader {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-color);
+      }
+
+      .blob {
+        width: 150px;
+        height: 150px;
+        background: linear-gradient(135deg, #6366f1, #d946ef);
+        border-radius: 50%;
+        filter: blur(40px);
+        animation: pulse-glow 3s infinite alternate;
+        position: absolute;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root">
+        <div class="app-loader">
+            <div class="blob"></div>
+            <div style="z-index: 10; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.02em;">SORA v1.6</div>
+        </div>
+    </div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

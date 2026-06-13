@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "createdAt": { "type": "number", "description": "Server timestamp" },
+        "updatedAt": { "type": "number", "description": "Server timestamp" }
+      },
+      "required": ["email", "createdAt", "updatedAt"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "A story object spanning settings and chapters",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "userId": { "type": "string" },
+        "synopsis": { "type": "string" },
+        "genre": { "type": "string" },
+        "setting": { "type": "string" },
+        "pov": { "type": "string" },
+        "pronounStyle": { "type": "string" },
+        "negativePrompt": { "type": "string" },
+        "chapters": { "type": "array" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "title", "userId", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profile"
+    },
+    "users/{userId}/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Stories created by the user"
+    }
+  }
+}
